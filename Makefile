@@ -32,7 +32,9 @@ main: $(CALL) main.o
 	
 	@echo "Compiling..."
 	-@$(CXX) -std=c++11 -fPIC $(LDFLAGS)  -o main.exe main.o $(LIBS) $(GRACKLE_LIB)
-	@echo "Done!"
+	@echo "Done. Creating Outputs folder..."
+	-@mkdir Outputs
+	@echo "Finished!"
 
 remove:
 
