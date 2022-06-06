@@ -16,7 +16,7 @@
 
 ///INITIAL CONDITIONS
 
-#define IC_FROM_FILE 0      //Self-explanatory. If set to 0, you still need a file to define an ambient (which is one row)
+#define IC_FROM_FILE 1      // Self-explanatory. If set to 0, you still need a file to define an ambient (which is one row)
 
 #define CENTRAL_EXPLOSION 1 //Defines a central explosion as a source term only at first iteration
 //#define EXPLOSION_ENERGY 1.0e51 //erg
@@ -29,9 +29,9 @@
                       //^^ If you start with a poor resolved central explosion (i.e.: ALWAYS) and you interpolate, the interpolation error will lead to a wrong result!
 
 ///AMR PARAMETERS
-#define AMR_ON 1        //(DEPRECIATED. DO NOT USE)Self-explanatory. 0 means static mesh of NCELLS, and 1 means Adaptive mesh with an initial set of NCELLS
-#define NCELLS  52000   //Initial number of cells (at INI_REF, important!)
-#define MAX_REF 9       //Maximum level of refinement (If 0, this is equivalent to turn AMR off)
+#define AMR_ON 1        //(DEPRECIATED, DO NOT USE) Self-explanatory. 0 means static mesh of NCELLS, and 1 means Adaptive mesh with an initial set of NCELLS
+#define NCELLS  512   //Initial number of cells (at INI_REF, important!)
+#define MAX_REF 0       //Maximum level of refinement (If 0, this is equivalent to turn AMR off)
 #define INI_REF MAX_REF //Initial level of refinement of ALL cells. (I suggest starting with INI_REF = MAX_REF for maximum accuracy at initial time)
 
 #define INTERPOL_RULE 0     //0 uses natural spline interpolation, 1 uses linear piecewise, and 2 both (spline for interior, linear for shock and ambient)
@@ -44,9 +44,9 @@
 ///SIMULATION PARAMETERS
 #define FLOAT_PRECISION 1   //If set to 0, grackle gr_type is 'float' and 'double' otherwise. I think is more useful for whole simulation.
 
-#define SYMMETRY 2        //(0) Cartesian (1) Cylindrical and (2) Spherical coordinates
+#define SYMMETRY 0        //(0) Cartesian (1) Cylindrical and (2) Spherical coordinates
 
-#define RBOUNDARY 1       //Boundary condition for last cell: (0) Reflection, (1) Copycat
+#define RBOUNDARY 0       //Boundary condition for last cell: (0) Reflection, (1) Copycat
 #define LBOUNDARY 0       //Boundary condition for first cell. Options are the same as RBOUNDARY. If SYMMETRY>0, LBOUNDARY should be a reflection (0) to avoid funky issues
 
 #define FAILURE -1        //If some subroutine fails (specifically functions from 'Physics/gasPhysics.cpp'), it will return this number
@@ -58,7 +58,7 @@
 #define ETA_E 0.0         //Used for dual energy formalism, if thermal energy / energy is less than this number, entropy system is used (have a number of 0.0 or higher to avoid negative pressures)
 
 ///PHYSICAL CONSTANTS
-#define ADIAB_CONST 5./3.            //(initial) Adiabatic constant, gamma for friends
+#define ADIAB_CONST 7./5.            //(initial) Adiabatic constant, gamma for friends
 #define INIT_METALLICITY 0.02        //(DEPRECIATED) Initial metallicity of cells
 
 #define MEANWEIGHT 0.85              //(DEPRECIATED) Molecular weight
@@ -82,7 +82,7 @@
 #define EOS_INTERPOLATION 0		//If 0, the EoS table is interpolated using the logarithm. Usual bilinear interpolation is 1		
 
 ///COOLING PARAMETERS
-#define ACTIVATE_COOLING 1        //If 1, it reads the cooling file and uses it as a table
+#define ACTIVATE_COOLING 0        //If 1, it reads the cooling file and uses it as a table
 #define COOLING_FILE "IC/Example/Cooling.txt" //"CoolingFunctions/CoolingTable_V4p2.txt" //Cool_19.txt" //Cool_21.txt" //Path to your cooling rate file in erg/cm3/s. For temperatures out of the range given, it will extrapolate
 							  //^The table you have to provide has density (g/cm3) as first column, pressure (erg/cm3) as second and the cooling rate (erg/cm3/s) as the third
 							  //^^Also make sure that the cooling rate HAS POSITIVE VALUES.
@@ -94,7 +94,7 @@
 					//^^^If you have a cooling file that covers a different range of temperatures, please check this parameter!
 
 ///HEATING PARAMETERS
-#define ACTIVATE_HEATING 1        //If 1, it reads the heating file and uses it as a table
+#define ACTIVATE_HEATING 0        //If 1, it reads the heating file and uses it as a table
 #define HEATING_FILE "IC/Example/Heating.txt" //Path to your heating rate file in erg/s. For temperatures out of the range given, it will extrapolate
 						    //^The table you have to provide has density (g/cm3) as first column, pressure (erg/cm3) as second and the heating rate (erg/s) as the third
 

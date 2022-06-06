@@ -1,0 +1,4 @@
+To run this test, paste the define.h to root folder.
+Then go to terminal and write:
+> ./main.exe IC/SodTube/IC_Sod.txt 0 6.33762e-12
+Last number is 0.2s in kyr.

@@ -16,7 +16,7 @@
 
 ///INITIAL CONDITIONS
 
-#define IC_FROM_FILE 0      //Self-explanatory. If set to 0, you still need a file to define an ambient (which is one row)
+#define IC_FROM_FILE 0      //(FOR NOW, LEAVE IT BE) Self-explanatory. If set to 0, you still need a file to define an ambient (which is one row)
 
 #define CENTRAL_EXPLOSION 1 //Defines a central explosion as a source term only at first iteration
 //#define EXPLOSION_ENERGY 1.0e51 //erg

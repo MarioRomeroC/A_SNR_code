@@ -116,7 +116,7 @@ int main(int argc, char** argv){
 
     //Check if input was given correctly
     if(argc < 4){
-        cout<<"syntaxis: ./main [your file] [initial time in kyr] [end time in kyr] [other times (in kyr) in which you want an output]"<<endl;
+        cout<<"syntaxis: ./main.exe [your file] [initial time in kyr] [end time in kyr] [other times (in kyr) in which you want an output]"<<endl;
         cout<<"Last array of times must be ordered and is optional to add"<<endl;
         throw runtime_error("Bad syntax");
     }
@@ -473,6 +473,7 @@ int main(int argc, char** argv){
             #endif // STEP_BY_STEP
             grid_diagnostics(grid,N);
             cout<<"time = "<<t/year<<" kyr"<<endl;
+            cout<<"dt   = "<<t/year<<" kyr"<<endl;
             write_output(grid,initial_ambient,next_output_t/year);
         #endif
     }

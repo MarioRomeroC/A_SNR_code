@@ -101,9 +101,12 @@ void init_from_file(Cell* grid, string name, const int N_cells){
     /*
        Generate the initial conditions from a file given as argument. The order of columns must be
 
-       x   rho   e   rho*v   S   [ignored]
+       x   rho   e   rho*v  S [ignored]
 
        Separated by tabs and without any initial text
+       S = modified entropy = pressure / rho^(gamma-1)
+       gamma = ADIABAT_CONST in define.h
+       Units are in cgs.
     */
 
     ///Count number of lines of input file
@@ -138,8 +141,6 @@ void init_from_file(Cell* grid, string name, const int N_cells){
     my_float xf = table[Position][N_lines-1];
     my_float dx = (xf - x0)/(N_cells-1.);
 
-    my_float ambient_rho = table[Density][N_lines -1];
-
     //Let's define interpolating functions
     Slopes rho_x = Slopes(table[Position],table[Mass_density],N_lines,SYMMETRY);
     Slopes ene_x = Slopes(table[Position],table[Energy_density],N_lines,SYMMETRY);
@@ -161,13 +162,13 @@ void init_from_file(Cell* grid, string name, const int N_cells){
         //Create cell
         grid[i] = Cell(data,xi-0.5*dx,xi+0.5*dx);
         if(i>0){ grid[i].Link_prev(grid[i-1]); }
-        }
+    }
 
-        ///Deleting dynamic arrays
-        for(int column=0;column<N_variables;++column){
-            delete[] table[column];
-        }
-        delete[] table;
+    ///Deleting dynamic arrays
+    for(int column=0;column<N_variables;++column){
+        delete[] table[column];
+    }
+    delete[] table;
 
 }
 

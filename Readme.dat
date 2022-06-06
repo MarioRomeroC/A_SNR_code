@@ -5,14 +5,16 @@ By M. Romero (me), Y. Ascasibar, J. Paoluš, R. Wünsch and M. Mollá.
 Published in MNRAS, Volume 505, Issue 4, pp.5301-5310.
 https://ui.adsabs.harvard.edu/abs/2021MNRAS.505.5301R/abstract
 
-Right now, it only solves hydrodynamics in 1D for SNR explosions. Although I want to recover the option to use an arbitrary IC.
+This code is meant to solve hydrodynamics in 1D for SNR explosions. Nonetheless, you can use your own initial conditions (IC, see below)
 To use this code, first write in terminal
 > make main
 And now write
 >./main.exe
 It will tell you instructions on how to run this code without too much effort.
 
-The only thing you need is an initial condition. You need to give a single file with five parameters:
+The only thing you need is an initial condition. There are two methods:
+#### IF 'IC_FROM_FILE' is 0 ####
+You need to give a single file with five parameters:
 -First number is the mass density of the ISM in g
 -Second number is the total energy density of the ISM in erg/cm3
 -Third number is the momentum density in g/s/cm2
@@ -21,6 +23,19 @@ The only thing you need is an initial condition. You need to give a single file 
 -Sixth number is the initial SNR explosion energy
 -Last number is the initial SNR ejected mass
 You can see an example in IC/Example/IC_n1_E1e51.txt
+These conditions are meant to reproduce the ISM, and place a single explosion at x=0
+#### IF 'IC_FROM_FILE' is 1 ####
+Here you provide a file with values for each cell within the simulation. See 'IC/SodTube' for an example with the most popular test case.
+In these files, you need to provide, per column
+-Cell position (cm)
+-Mass density (g/cm3)
+-Total Energy density (erg/cm3)
+-Momentum density (g/s/cm2)
+-Modified entropy (cgs units). This is Pressure/ mass density^(gamma-1) ; where gamma is the adiabatic constant
+-Remaining columns are ignored.
+If the number of rows does not match with the number of cells, do (not) worry, this code will generate the grid with the defined number of cells by interpolating the file given.
+Also note that this structure is the same as outputs given by this code. That is, you can use the results of a previous run as an IC for a new one.
+####
 
 Now you run the .exe . Results will be in Output folder, you will find three types of files
 >d[X]_Z[A]_P[Y]_t=[T]kyr.txt
@@ -41,3 +56,5 @@ In order to handle cooling and heating, you need to provide three tables per fil
 -Second column of all tables is the pressure in erg/cm3
 -Third column is either Temperature (K), energy density loss rate (erg/cm3/s) or heating rate (erg/s).
 You can see examples in 'IC/Examples' folder. Temperature table is called EoS (from 'Equation of State').
+
+The only mandatory table is the temperature one, the other two can be deactivated by writing 0 in 'ACTIVATE_COOLING' and 'ACTIVATE_HEATING'.

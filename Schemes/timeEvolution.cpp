@@ -27,21 +27,25 @@ my_float set_timestep(Cell my_cell,my_float max_dt = INFINITY){
     //This routine compares the maximum timestep of each stability function (below)
     //and compares with max_dt.
     //Returns the minimum timestep
-
+    
     my_float next_dt = max_dt;                      //Custom timestep
     my_float ba_dt   = basic_stability(my_cell);    //Hydrodynamic timestep
-    my_float cool_dt = std::abs(my_cell.get_cooling_time());  //Cooling timestep
-    cool_dt *= CFL_NUMBER2; //Note that basic_stability reduces its timestep by the same amount
-
-    //Take the minimum of all timesteps
+    //Check if ba_dt is lower than next_dt
     next_dt = (next_dt > ba_dt) ? ba_dt : next_dt;
-    next_dt = (next_dt > cool_dt) ? cool_dt : next_dt;
     
-    if(next_dt < SOFT_ZERO){
-        std::cout<<"Gotcha!"<<std::endl;
-        std::cout<<ba_dt<<' '<<cool_dt<<' '<<next_dt<<std::endl;
-        throw std::runtime_error("Test stop!");
-    }
+    #if ACTIVATE_COOLING == 1
+        my_float cool_dt = std::abs(my_cell.get_cooling_time());  //Cooling timestep
+        cool_dt *= CFL_NUMBER2; //Note that basic_stability reduces its timestep by the same amount
+        
+        //Check if the cooling timestep is lower than next_dt
+        next_dt = (next_dt > cool_dt) ? cool_dt : next_dt;
+        
+        if(next_dt < SOFT_ZERO){
+            std::cout<<"Gotcha!"<<std::endl;
+            std::cout<<ba_dt<<' '<<cool_dt<<' '<<next_dt<<std::endl;
+            throw std::runtime_error("Test stop!");
+        }
+    #endif
     
     return next_dt;
 }
