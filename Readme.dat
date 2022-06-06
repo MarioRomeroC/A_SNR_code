@@ -1,0 +1,43 @@
+#A_SNR_Code
+This is an updated version of the hydrodynamic code I wrote from strach and was used in:
+-Impact of the ERF on the structure and evolution of SNR.
+By M. Romero (me), Y. Ascasibar, J. Paoluš, R. Wünsch and M. Mollá.
+Published in MNRAS, Volume 505, Issue 4, pp.5301-5310.
+https://ui.adsabs.harvard.edu/abs/2021MNRAS.505.5301R/abstract
+
+Right now, it only solves hydrodynamics in 1D for SNR explosions. Although I want to recover the option to use an arbitrary IC.
+To use this code, first write in terminal
+> make main
+And now write
+>./main.exe
+It will tell you instructions on how to run this code without too much effort.
+
+The only thing you need is an initial condition. You need to give a single file with five parameters:
+-First number is the mass density of the ISM in g
+-Second number is the total energy density of the ISM in erg/cm3
+-Third number is the momentum density in g/s/cm2
+-Fourth number is the ambient metallicity
+-Fifth number is the extent of the simulation box in cm
+-Sixth number is the initial SNR explosion energy
+-Last number is the initial SNR ejected mass
+You can see an example in IC/Example/IC_n1_E1e51.txt
+
+Now you run the .exe . Results will be in Output folder, you will find three types of files
+>d[X]_Z[A]_P[Y]_t=[T]kyr.txt
+Where [X] is mass density in terms of Hydrogen mass per cm3, [A] is the metallicity, [Y] is the pressure (in K/cm3), and [T] is the time in kyr.
+Those values are referred to the last cell, which is supposed to be the ambient ISM.
+You will find inside several columns of data without any legend, and here is where the second file enters
+>key.txt
+This file tells you the magnitude and units of each column. You can deactivate this option in define.h by turning 'KEY_ON' to 1.
+>Map_Z0.02.dat
+This file provide a long table of values.
+Given a density and pressure (first and second columns, respectively), it tells you the value that other magnitudes will take (temperature, cooling time, heating rate, etc) in the simulation.
+This file is useful to check the quantities related to the state of the gas that a particular simulation will take.
+You can deactivate this file as well in define.h by changing 'CREATE_MAP' to 0
+
+#### CHANGING COOLING AND HEATING ####
+In order to handle cooling and heating, you need to provide three tables per file.
+-First column of all tables is the density in g/cm3
+-Second column of all tables is the pressure in erg/cm3
+-Third column is either Temperature (K), energy density loss rate (erg/cm3/s) or heating rate (erg/s).
+You can see examples in 'IC/Examples' folder. Temperature table is called EoS (from 'Equation of State').
