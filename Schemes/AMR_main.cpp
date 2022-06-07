@@ -1,6 +1,5 @@
 #ifndef AMR_MAIN_CPP
 #define AMR_MAIN_CPP
-#if AMR_ON == 1
 /**
     Adaptive Mesh Refinement (AMR) main functions
 **/
@@ -600,5 +599,4 @@ void refine_grid(Cell* grid,const int max_N, const bool delay_time = false){
 
 }
 
-#endif //Ends AMR_ON
 #endif //Ends ifndef

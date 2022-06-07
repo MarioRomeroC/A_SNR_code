@@ -35,16 +35,15 @@ class Cell{
         my_float r; //Location of the cell
         my_float dr; //Width of such cell
 
-        #if AMR_ON == 1
-            int LoR = INI_REF; //Level of Refinement. All cells will be initialized with INI_REF refinement. Be aware of that when creating cells
-            //Booleans to know if a cell need refinement or not
-            bool flag_for_merge;
-            bool flag_for_split;
+        
+        int LoR = INI_REF; //Level of Refinement. All cells will be initialized with INI_REF refinement. Be aware of that when creating cells
+        //Booleans to know if a cell need refinement or not
+        bool flag_for_merge;
+        bool flag_for_split;
 
-
-            int flag_for_shock; //0 -> No shock; 1 -> I'm a shock; 2 -> I have a shock one cell in front/behind me; 3 -> I have a shock two cells in front/behind me; etc
-            int flag_for_gradient; //Same as above, but with energy gradients.
-        #endif
+        int flag_for_shock; //0 -> No shock; 1 -> I'm a shock; 2 -> I have a shock one cell in front/behind me; 3 -> I have a shock two cells in front/behind me; etc
+        int flag_for_gradient; //Same as above, but with energy gradients.
+        
 
         /// DO IMPORTANT STUFF
         //These functions appear inside the public functions that compute the predictor, average and corrector.
@@ -351,7 +350,6 @@ class Cell{
         }
 
         ///AMR RELATED FUNCTIONS
-        #if AMR_ON == 1
         int level_of_refinement(){return LoR;}
 
         int compare_LoRs(Cell* second){
@@ -400,8 +398,6 @@ class Cell{
 
         void force_split(){ this->flag_for_split = true; }
         void deny_merge(){ this->flag_for_merge = false; }
-
-        #endif
 
         ///SOFT COPY CELL
         //A.k.a keep the pointers!

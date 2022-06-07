@@ -29,7 +29,7 @@
                       //^^ If you start with a poor resolved central explosion (i.e.: ALWAYS) and you interpolate, the interpolation error will lead to a wrong result!
 
 ///AMR PARAMETERS
-#define AMR_ON 1        //(DEPRECIATED. DO NOT USE)Self-explanatory. 0 means static mesh of NCELLS, and 1 means Adaptive mesh with an initial set of NCELLS
+//To deactivate AMR, put 0 in MAX_REF
 #define NCELLS  52000   //Initial number of cells (at INI_REF, important!)
 #define MAX_REF 9       //Maximum level of refinement (If 0, this is equivalent to turn AMR off)
 #define INI_REF MAX_REF //Initial level of refinement of ALL cells. (I suggest starting with INI_REF = MAX_REF for maximum accuracy at initial time)

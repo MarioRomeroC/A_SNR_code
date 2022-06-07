@@ -107,11 +107,7 @@ int main(int argc, char** argv){
 
     time_t real_tstart = time(NULL);
     //Create number of available cells
-    #if AMR_ON == 1
-        const int N = NCELLS * pow(2,MAX_REF - INI_REF); //MAXIMUM number of cells (in case that all your cells have max refinement, which is unlikely.
-    #else
-        const int N = NCELLS;
-    #endif
+    const int N = NCELLS * pow(2,MAX_REF - INI_REF); //MAXIMUM number of cells (in case that all your cells have max refinement, which is unlikely.
     const int Nneighbors = 4; //Number of neighbours (and ghost cells) to take into account
 
     //Check if input was given correctly
@@ -120,20 +116,20 @@ int main(int argc, char** argv){
         cout<<"Last array of times must be ordered and is optional to add"<<endl;
         throw runtime_error("Bad syntax");
     }
-    const my_float year = 365.25*24.*3600.*1000.; //kyr -> s conversion
-    my_float t0 = todouble(argv[2])*year; //Initial time
-    my_float tf = todouble(argv[3])*year; //Last time
+    const my_float kyear = 365.25*24.*3600.*1000.; //kyr -> s conversion
+    my_float t0 = todouble(argv[2])*kyear; //Initial time
+    my_float tf = todouble(argv[3])*kyear; //Last time
     
     my_float cstm_dt = (tf-t0)/1e3; //Custom timestep. It is an initial guess, and it can be less if stability of the code is compromised
     my_float t  = t0;
     my_float dt;
     my_float next_dt;
     my_float tmp_dt;
-    const my_float AMR_delay_t = DELAY_AMR*year;
+    const my_float AMR_delay_t = DELAY_AMR*kyear;
 
     int output_count = argc-4; //If you want more outputs than initial and end time, this number is positive and accounts how many files are left
     int curr_arg = 4;
-    my_float next_output_t = ( curr_arg < argc ) ? todouble(argv[curr_arg])*year : t0-1.; //Second result is to make sure that you will never get an extra output
+    my_float next_output_t = ( curr_arg < argc ) ? todouble(argv[curr_arg])*kyear : t0-1.; //Second result is to make sure that you will never get an extra output
 
     //Declare all my code needed variables
     Cell* grid = new Cell[N];
@@ -171,10 +167,10 @@ int main(int argc, char** argv){
     //Let's create a data output for t=0
     #if DEBUG == 1
         grid_diagnostics(grid,N);
-        cout<<"time = "<<t/year<<" kyr"<<endl;
+        cout<<"time = "<<t/kyear<<" kyr"<<endl;
         int test_number;
     #endif
-    write_output(grid,initial_ambient,t/year);
+    write_output(grid,initial_ambient,t/kyear);
 
     ///Get first timestep
     next_dt = cstm_dt;
@@ -450,11 +446,11 @@ int main(int argc, char** argv){
         **/
         if( t >= next_output_t && curr_arg < argc){
 
-            write_output(grid,initial_ambient,next_output_t/year); //Output file will give time in yr
+            write_output(grid,initial_ambient,next_output_t/kyear); //Output file will give time in yr
 
             if(curr_arg != argc-1){ //Is not the last argument
                 curr_arg++;
-                next_output_t = todouble(argv[curr_arg])*year;
+                next_output_t = todouble(argv[curr_arg])*kyear;
             }
             else{
                 next_output_t = 2.*tf; //No more times
@@ -472,14 +468,14 @@ int main(int argc, char** argv){
             }
             #endif // STEP_BY_STEP
             grid_diagnostics(grid,N);
-            cout<<"time = "<<t/year<<" kyr"<<endl;
-            cout<<"dt   = "<<t/year<<" kyr"<<endl;
-            write_output(grid,initial_ambient,next_output_t/year);
+            cout<<"time = "<<t/kyear<<" kyr"<<endl;
+            cout<<"dt   = "<<t/kyear<<" kyr"<<endl;
+            write_output(grid,initial_ambient,next_output_t/kyear);
         #endif
     }
 
     //Generate final output file
-    write_output(grid,initial_ambient,t/year); //Output file will give time in yr
+    write_output(grid,initial_ambient,t/kyear); //Output file will give time in yr
 
     //Destroy everything
     delete[] grid;

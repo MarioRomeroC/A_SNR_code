@@ -39,10 +39,9 @@ void write_output(Cell* grid, Cell initial_ambient, const my_float my_time = 0.0
         file<<"pressure | "<<"temperature | "<<" number den | "<<"internal energy || ";
         //Other variables then
         file<<" velocity | "<<"cooling function | "<<" metallicity | "<<" gamma | "<<" meanweight ||";
-        #if AMR_ON == 1
-            //Adaptive Mesh Refinement variables last
-            file<<" LoR | "<<" dx";
-        #endif
+        //Adaptive Mesh Refinement variables
+        file<<" LoR | "<<"dx | "<<"Shocked? ||";
+        file<<" Mach number | "<<"heating function (erg/cm3/s) ";
         file<<std::endl;
     #else
         //Generate a separate file with the key
@@ -63,16 +62,11 @@ void write_output(Cell* grid, Cell initial_ambient, const my_float my_time = 0.0
         keyfile<<"12 : metallicity"<<std::endl;
         keyfile<<"13 : gamma"<<std::endl;
         keyfile<<"14 : mean weight"<<std::endl;
-        #if AMR_ON == 1
-            keyfile<<"15 : Level of Refinement"<<std::endl;
-            keyfile<<"16 : Cell width"<<std::endl;
-            keyfile<<"17 : Shocked cell"<<std::endl;
-            keyfile<<"18 : Mach number"<<std::endl;
-            keyfile<<"19 : heating function (erg/cm3/s)"<<std::endl;
-        #else
-            keyfile<<"15 : Mach number"<<std::endl;
-            keyfile<<"16 : heating function (erg/cm3/s)"<<std::endl;
-        #endif
+        keyfile<<"15 : Level of Refinement"<<std::endl;
+        keyfile<<"16 : Cell width"<<std::endl;
+        keyfile<<"17 : Shocked cell"<<std::endl;
+        keyfile<<"18 : Mach number"<<std::endl;
+        keyfile<<"19 : heating function (erg/cm3/s)"<<std::endl;
 
         keyfile<<"--------------------"<<std::endl;
         keyfile<<"All units are in cgs, outputs are given with "<<NUMBER_PRECISION<<" digits"<<std::endl;
@@ -88,9 +82,7 @@ void write_output(Cell* grid, Cell initial_ambient, const my_float my_time = 0.0
         file<<curr->location()<<" "<<curr->eq(0)<<" "<<curr->eq(1)<<" "<<curr->eq(2)<<" "<<curr->eq(3)<<" ";
         file<<curr->get_pressure()<<" "<<curr->get_temperature()<<" "<<curr->get_number_density()<<" "<<curr->get_internal_energy()<<" ";
         file<<curr->get_velocity()<<" "<<-curr->get_cooling_function()<<" "<<curr->get_metallicity()<<" "<<curr->get_adiabatic_const()<<" "<<curr->get_meanweight()<<" ";
-        #if AMR_ON == 1
-            file<<curr->level_of_refinement()<<" "<<curr->width()<<" "<<curr->shocked_cell();
-        #endif
+        file<<curr->level_of_refinement()<<" "<<curr->width()<<" "<<curr->shocked_cell();
         file<<" "<<curr->get_velocity()/curr->get_magnetosonic()<<" "<<curr->get_heating_function();
 
         file<<std::endl;
@@ -101,9 +93,7 @@ void write_output(Cell* grid, Cell initial_ambient, const my_float my_time = 0.0
     file<<curr->location()<<" "<<curr->eq(0)<<" "<<curr->eq(1)<<" "<<curr->eq(2)<<" "<<curr->eq(3)<<" ";
     file<<curr->get_pressure()<<" "<<curr->get_temperature()<<" "<<curr->get_number_density()<<" "<<curr->get_internal_energy()<<" ";
     file<<curr->get_velocity()<<" "<<-curr->get_cooling_function()<<" "<<curr->get_metallicity()<<" "<<curr->get_adiabatic_const()<<" "<<curr->get_meanweight()<<" ";
-    #if AMR_ON == 1
-        file<<curr->level_of_refinement()<<" "<<curr->width()<<" "<<curr->shocked_cell();
-    #endif
+    file<<curr->level_of_refinement()<<" "<<curr->width()<<" "<<curr->shocked_cell();
     file<<" "<<curr->get_velocity()/curr->get_magnetosonic()<<" "<<curr->get_heating_function();
 
     file<<std::endl;

@@ -21,18 +21,10 @@ void reflect_right(Cell& last,Cell& penult, Cell* grid, const int N=NCELLS){
     Cell* true_last;
     Cell* true_penult;
 
-    #if AMR_ON == 1
-        Cell* finder;
-        finder = grid;
-        true_last = find_last(finder);
-        true_penult = true_last->prev;
-    #else
-        true_last = new Cell;
-        true_penult = new Cell;
-
-        *true_last = grid[N-1];
-        *true_penult = grid[N-2];
-    #endif
+    Cell* finder;
+    finder = grid;
+    true_last = find_last(finder);
+    true_penult = true_last->prev;
 
     ///Start computing the correct positions and widths
     my_float r_last  = true_last->location() + true_last->width();
@@ -65,10 +57,6 @@ void reflect_right(Cell& last,Cell& penult, Cell* grid, const int N=NCELLS){
     penult.update_tcool(true_penult->get_cooling_time());
     penult.update_meanweight(true_penult->get_meanweight());
 
-    #if AMR_ON != 1
-        delete true_last;
-        delete true_penult;
-    #endif
     ///That's all
 }
 
@@ -87,19 +75,11 @@ void copy_right(Cell& last,Cell& penult, Cell* grid, const int N=NCELLS){
     Cell* true_last;
     Cell* true_penult;
 
-    #if AMR_ON == 1
-        Cell* finder;
-        finder = grid;
+    Cell* finder;
+    finder = grid;
 
-        true_last = find_last(finder);
-        true_penult = true_last->prev;
-    #else
-        true_last = new Cell;
-        true_penult = new Cell;
-
-        *true_last = grid[N-1];
-        *true_penult = grid[N-2];
-    #endif
+    true_last = find_last(finder);
+    true_penult = true_last->prev;
 
     ///Start copying magnitudes to last and penult
     last   = *true_last;
@@ -118,11 +98,6 @@ void copy_right(Cell& last,Cell& penult, Cell* grid, const int N=NCELLS){
 
     penult.update_tcool(true_penult->get_cooling_time());
     penult.update_meanweight(true_penult->get_meanweight());
-
-    #if AMR_ON != 1
-        delete true_last;
-        delete true_penult;
-    #endif
 
     ///That's all
 
@@ -144,18 +119,10 @@ void reflect_left(Cell& first,Cell& second, Cell* grid, const int N=NCELLS){
     Cell* true_first;
     Cell* true_second;
 
-    #if AMR_ON == 1
-        Cell* finder;
-        finder = grid;
-        true_first = find_first(finder);
-        true_second = true_first->next;
-    #else
-        true_first  = new Cell;
-        true_second = new Cell;
-
-        *true_first = grid[0];
-        *true_second = grid[1];
-    #endif
+    Cell* finder;
+    finder = grid;
+    true_first = find_first(finder);
+    true_second = true_first->next;
 
     ///Start computing the correct positions and widths
     my_float r_first  = true_first->location() - true_first->width();
@@ -188,11 +155,6 @@ void reflect_left(Cell& first,Cell& second, Cell* grid, const int N=NCELLS){
     second.update_tcool(true_second->get_cooling_time());
     second.update_meanweight(true_second->get_meanweight());
 
-    #if AMR_ON != 1
-        delete true_first;
-        delete true_second;
-    #endif
-
     ///That's all
 
 }
@@ -213,18 +175,11 @@ void copy_left(Cell& first,Cell& second, Cell* grid, const int N=NCELLS){
     Cell* true_first;
     Cell* true_second;
 
-    #if AMR_ON == 1
-        Cell* finder;
-        finder = grid;
-        true_first = find_first(finder);
-        true_second = true_first->next;
-    #else
-        true_first  = new Cell;
-        true_second = new Cell;
 
-        *true_first = grid[0];
-        *true_second = grid[1];
-    #endif
+    Cell* finder;
+    finder = grid;
+    true_first = find_first(finder);
+    true_second = true_first->next;
 
     ///Start copying magnitudes to last and penult
     first  = *true_first;//grid[0];
@@ -243,11 +198,6 @@ void copy_left(Cell& first,Cell& second, Cell* grid, const int N=NCELLS){
 
     second.update_tcool(true_second->get_cooling_time());
     second.update_meanweight(true_second->get_meanweight());
-
-    #if AMR_ON != 1
-        delete true_first;
-        delete true_second;
-    #endif
 
     ///That's all
 
