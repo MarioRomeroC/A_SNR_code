@@ -19,9 +19,7 @@
 #define IC_FROM_FILE 1      // Self-explanatory. If set to 0, you still need a file to define an ambient (which is one row)
 
 #define CENTRAL_EXPLOSION 1 //Defines a central explosion as a source term only at first iteration
-//#define EXPLOSION_ENERGY 1.0e51 //erg
-//#define EJECTED_MASS 10.  //Solar masses
-#define MASS_ON 0 //If 0, no mass is added to density (These kind of explosions are thermal)
+#define MASS_ON 0 	    //If 0, no mass is added to density. Put 1 to add mass, but note that this feature (adding mass) is not fully tested.
 
 #define SHOCK_RADIUS .1 //Shock radius, in pc, at starting time
 

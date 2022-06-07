@@ -33,94 +33,6 @@ void normalize(my_float* my_function, int N, my_float const_num=1.){
     }
 }
 
-#if MASS_ON == 1
-my_float create_central_explosion(Cell* grid, const int N_cells){
-    //Returns starting time, but the important part is to get IC profiles right
-    //In order to work properly, all cells must be at the same refinement level (you only have to care about that at starting time)
-    //Note that constant velocity profile is a special case.
-
-    //(1.1) Define some constants related with define.h
-    const my_float shock_radius = SHOCK_RADIUS*PARSEC; //In define.h it was in pc, here is now in code units (cm)
-
-    const my_float ejected_mass = EJECTED_MASS*SOLAR_MASS; //In define.h it was in solar masses, here is now in code units (g)
-    const my_float ejected_energy = EXPLOSION_ENERGY;
-
-    const my_float explosion_meanweight = 0.62; //That number is the value for a fully ionized gas
-
-    //(1.2) Define other constants related with this simulation
-    const my_float simulation_radius = grid[N_cells-1].location();
-
-    const int n = std::round(N_cells*(shock_radius/simulation_radius));
-
-    //(2.1) Create needed arrays.
-    my_float w[n]; //w profile (=velocity profile)
-    my_float V[n]; //Cell volumes
-    my_float f[n]; //Structure functions
-    my_float normalization = 0.;
-
-    for(int i=0; i<n; ++i){
-        my_float ri = grid[i].location();
-        my_float dr = grid[i].width();
-
-        w[i] = w_profile(my_float(i),my_float(n));
-        V[i] = (4.*PI/3.) * ( std::pow(ri+0.5*dr,3.) - std::pow(ri-0.5*dr,3.) );
-        f[i] = structure_function(grid[i].location());
-
-        normalization += f[i]*V[i];
-    }
-    //(2.2) Repeat again the loop to get normalized f[i] [ Sum(f[i])=1. ]
-    my_float energy_sum = 0.; //This will be the Sum(f[i]*w[i]*w[i]). This is needed for shock velocity and energy injection
-                                //It's necessary if radial velocity profile is not constant
-    for(int i=0; i<n; ++i){
-        f[i] *= ejected_mass/normalization; //No phytonic way to do that. Too bad!
-        energy_sum += f[i]*w[i]*w[i]*V[i];
-    }
-
-
-    //(3.1) Get shock velocity and starting time
-    my_float v_shock = std::sqrt( 2.*ejected_energy / ( energy_sum )  );
-    my_float t_0 = shock_radius / v_shock; //This is the return value.
-
-    //(3.2) Get Mass and energy injection
-    my_float explosion_data[NUM_EQUATIONS];
-    my_float explosion_P;
-    my_float explosion_T;
-    bool explosion_system_E = true;
-
-    for(int i=0;i<n;++i){
-        my_float ri = grid[i].location();
-        my_float dr = grid[i].width();
-        my_float vel = w[i]*v_shock; //Velocity profile.
-
-        my_float added_mass   = f[i];
-        my_float added_energy = 0.5*f[i]*vel*vel;
-
-        //Hydrodynamic variables
-        explosion_data[0] = grid[i].eq(0) + added_mass;
-
-        explosion_data[1] = grid[i].eq(1) + added_energy;
-
-        explosion_data[2] = grid[i].eq(2) + added_mass * vel;
-        explosion_data[3] = explosion_data[1]*(ADIAB_CONST - 1.)/std::pow(explosion_data[0], ADIAB_CONST - 1.);
-
-        //Thermodynamic variables
-        explosion_P = pressure(explosion_data[0],explosion_data[1],explosion_data[2]/explosion_data[0],grid[i].get_adiabatic_const());
-        if(explosion_P == FAILURE){ //Use dual energy formalism
-            explosion_P = pressure(explosion_data[0],explosion_data[3],grid[i].get_adiabatic_const());
-            explosion_system_E = false;
-        }
-        explosion_T = explosion_meanweight*(explosion_P/explosion_data[0])*(HYDROGEN_MASS/BOLTZMANN_CTE);
-
-        //Recreate the cell again
-        Cell explosion_cell = Cell(explosion_data,ri-0.5*dr,ri+0.5*dr);
-
-        grid[i].soft_update(explosion_cell); //Soft copy preserves the pointers
-    }
-
-    return t_0;
-}
-
-#else
 my_float create_central_explosion(Cell* grid, const int N_cells, my_float my_explosion, my_float my_ejected_mass){
     //Following Doumler & Knebe 10, follow their prescription for a Sedov blastwave.
     //You only need a few cells
@@ -157,8 +69,9 @@ my_float create_central_explosion(Cell* grid, const int N_cells, my_float my_exp
         my_float Vi = (4./3.)*PI*( std::pow(xi+0.5*dx,3.) - std::pow(xi-0.5*dx,3.) );
 
         my_float injected_energy = (my_explosion/Vi)*f[i];
+        my_float injected_mass   =  MASS_ON*(my_ejected_mass/Vi)*f[i];
 
-        explosion_data[0] = grid[i].eq(0);// + MASS_ON*(ejected_mass/Vi)*structure_function(wi);
+        explosion_data[0] = grid[i].eq(0) + injected_mass;
         explosion_data[1] = grid[i].eq(1) + injected_energy;
         explosion_data[3] = explosion_data[1]*(ADIAB_CONST - 1.)/std::pow(explosion_data[0], ADIAB_CONST - 1.);
         explosion_data[2] = grid[i].eq(2);
@@ -174,8 +87,6 @@ my_float create_central_explosion(Cell* grid, const int N_cells, my_float my_exp
 
     return t0;
 }
-#endif
-
 
 my_float set_ambient(Cell* grid, string name, const int N_cells){
     //Will create your ambient. For the first step, cells are ordered (i.e grid[i] is guaranteed to be i-th cell, which is no longer true when refinement activates later)
@@ -220,11 +131,7 @@ my_float set_ambient(Cell* grid, string name, const int N_cells){
 
     //Now set extra things
     #if CENTRAL_EXPLOSION == 1
-        #if MASS_ON ==1
-        return create_central_explosion(grid,N_cells, my_fields,my_units);
-        #else
         return create_central_explosion(grid, N_cells,explosion_energy,ejected_mass);
-        #endif
     #else
         return 0.0;
     #endif
